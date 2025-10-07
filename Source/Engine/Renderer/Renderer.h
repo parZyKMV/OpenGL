@@ -3,6 +3,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
 #include <iostream>
+#include <glad/glad.h>
 
 namespace neu {
 	/// <summary>
@@ -141,6 +142,7 @@ namespace neu {
 		// Allow Text and Texture classes to access the SDL renderer for their operations
 		friend class Text;
 		friend class Texture;
+		SDL_GLContext m_context;
 
 		// Dimensions of the render target
 		int m_width{ 0 };
