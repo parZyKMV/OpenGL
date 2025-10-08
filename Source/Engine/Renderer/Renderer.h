@@ -138,11 +138,12 @@ namespace neu {
 		/// <returns>The height in pixels</returns>
 		int GetHeight() const { return m_height; }
 
+		SDL_GLContext m_context;
 	private:
 		// Allow Text and Texture classes to access the SDL renderer for their operations
 		friend class Text;
 		friend class Texture;
-		SDL_GLContext m_context;
+		
 
 		// Dimensions of the render target
 		int m_width{ 0 };
