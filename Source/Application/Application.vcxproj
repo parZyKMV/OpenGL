@@ -203,16 +203,13 @@
     <ClInclude Include="ApplicationPCH.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Build\Assets\Meshes\enemy.msh" />
-    <None Include="..\..\Build\Assets\Platformer\Scenes\level.json" />
-    <None Include="..\..\Build\Assets\Platformer\Scenes\prototypes.json" />
-    <None Include="..\..\Build\Assets\Platformer\Tilemaps\tilemap.json" />
-    <None Include="..\..\Build\Assets\scene.json" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
       <Project>{2106e82e-b3c5-4570-bb83-bbf1bb7e5c9b}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Build\Assets\shaders\basics.txt" />
+    <Text Include="..\..\Build\Assets\shaders\fragt.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
