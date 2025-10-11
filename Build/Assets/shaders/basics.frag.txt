@@ -1,0 +1,9 @@
+#version 460 core
+
+out vec4 f_color;
+
+void main()
+{
+	// Set the fragment color to a solid color (e.g., red)
+	fcolor = vec4(1.0, 0.0, 0.0, 1.0); // RGBA
+}

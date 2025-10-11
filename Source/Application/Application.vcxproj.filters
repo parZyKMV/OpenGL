@@ -26,11 +26,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\Build\Assets\shaders\basics.txt">
+    <None Include="..\..\Build\Assets\shaders\basic.frag">
       <Filter>Assets\Shaders</Filter>
-    </Text>
-    <Text Include="..\..\Build\Assets\shaders\fragt.txt">
+    </None>
+    <None Include="..\..\Build\Assets\shaders\basic.vert">
       <Filter>Assets\Shaders</Filter>
-    </Text>
+    </None>
   </ItemGroup>
 </Project>
