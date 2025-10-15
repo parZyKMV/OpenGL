@@ -55,7 +55,7 @@ namespace neu {
 		/// </summary>
 		void Present();
 
-		/// <summary>
+		/*/// <summary>
 		/// Sets the draw color using 8-bit color values (0-255).
 		/// This color is used for drawing primitives and clearing the screen.
 		/// </summary>
@@ -124,7 +124,7 @@ namespace neu {
 		/// <param name="angle">Rotation angle in degrees (clockwise)</param>
 		/// <param name="scale">Uniform scale factor (1.0 = normal size)</param>
 		/// <param name="flipH">If true, flips the texture horizontally</param>
-		void DrawTexture(class Texture& texture, const rect& sourceRect, float x, float y, float angle, float scale = 1, bool flipH = false);
+		void DrawTexture(class Texture& texture, const rect& sourceRect, float x, float y, float angle, float scale = 1, bool flipH = false);*/
 
 		/// <summary>
 		/// Gets the width of the window/render target.
@@ -138,7 +138,6 @@ namespace neu {
 		/// <returns>The height in pixels</returns>
 		int GetHeight() const { return m_height; }
 
-		SDL_GLContext m_context;
 	private:
 		// Allow Text and Texture classes to access the SDL renderer for their operations
 		friend class Text;
@@ -152,7 +151,7 @@ namespace neu {
 		// SDL window handle
 		SDL_Window* m_window = nullptr;
 
-		// SDL renderer handle used for all drawing operations
-		SDL_Renderer* m_renderer = nullptr;
+		//OpenGl context
+		SDL_GLContext m_context{ 0 };
 	};
 }
