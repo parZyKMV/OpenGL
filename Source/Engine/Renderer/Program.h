@@ -3,6 +3,8 @@
 #include <map>
 #include <memory>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "Renderer/Shader.h" 
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
@@ -30,6 +32,9 @@ namespace neu {
 
         void SetUniform(const std::string& name, const neu::vec2& value);
         void SetUniform(const std::string& name, const neu::vec3& value);
+        void SetUniform(const std::string& name, const glm::mat3& value);
+        void SetUniform(const std::string& name, const glm::mat4& value);
+
 
     private:
         GLint GetUniformLocation(const std::string& name);

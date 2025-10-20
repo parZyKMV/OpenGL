@@ -46,6 +46,7 @@
 #include "Renderer/TextureAnimation.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Program.h"
+#include "Renderer/VetexBuffer.h"
 
 
 // physics
@@ -71,4 +72,7 @@
 #include <algorithm>
 #include <cmath>
 #include <filesystem>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
