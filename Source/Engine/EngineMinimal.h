@@ -47,6 +47,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Program.h"
 #include "Renderer/VetexBuffer.h"
+#include "Renderer/Model.h"
 
 
 // physics

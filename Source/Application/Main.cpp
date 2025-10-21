@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 	//Vertex Buffer Object
 	neu::res_t<neu::VertexBuffer> vb = std::make_shared<neu::VertexBuffer>();
 
-	vb->CreateVertexBuffer(sizeof(Vertex), (GLsizei)vertices.size(), vertices.data());
+	vb->CreateVertexBuffer((GLsizei)sizeof(Vertex) * (GLsizei)vertices.size(), (GLsizei)vertices.size(), vertices.data());
 	vb->CreateIndexBuffer(GL_UNSIGNED_INT, (GLsizei)indices.size(), indices.data());
 	vb->SetAttribute(0, 3, sizeof(Vertex), offsetof(Vertex, position));
 	vb->SetAttribute(1, 3, sizeof(Vertex), offsetof(Vertex, color));
@@ -93,6 +93,9 @@ int main(int argc, char* argv[]) {
 	float aspect = (float)neu::GetEngine().GetRenderer().GetWidth() / (float)neu::GetEngine().GetRenderer().GetHeight();
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspect, 0.01f , 100.0f);
 	program->SetUniform("u_projection", projection);
+
+	auto model3d = std::make_shared<neu::Model>();
+    model3d->Load("models/spot.obj");
 
 
     // === MAIN LOOP ===
@@ -126,8 +129,8 @@ int main(int argc, char* argv[]) {
         neu::vec3 color{ 0, 0, 0 };
         neu::GetEngine().GetRenderer().Clear();
 
-		vb->Draw(GL_TRIANGLES);
-
+		//vb->Draw(GL_TRIANGLES);
+		model3d->Draw(GL_TRIANGLES);
 
         neu::GetEngine().GetRenderer().Present();
     }
