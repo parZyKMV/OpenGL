@@ -1,4 +1,4 @@
-#include "VetexBuffer.h"
+﻿#include "VetexBuffer.h"
 
 namespace neu
 {
@@ -13,9 +13,11 @@ namespace neu
 		if (m_vbo) glDeleteBuffers(1, &m_vbo);
 		if (m_vao) glDeleteVertexArrays(1, &m_vao);
 	}
+
 	void VertexBuffer::Draw(GLenum primitiveType)
 	{
 		glBindVertexArray(m_vao);
+
 		if (m_ibo)
 		{
 			glDrawElements(primitiveType, m_indexCount, m_indexType, 0);
@@ -24,30 +26,40 @@ namespace neu
 		{
 			glDrawArrays(primitiveType, 0, m_vertexCount);
 		}
+
+		glBindVertexArray(0); 
+		LOG_INFO("Drawing mesh with {} vertices and {} indices", m_vertexCount, m_indexCount);
 	}
-	void VertexBuffer::CreateVertexBuffer(GLsizei size, GLsizei count, GLvoid* data)
+
+	void VertexBuffer::CreateVertexBuffer(GLsizei totalSizeBytes, GLsizei vertexCount, GLvoid* data)
 	{
-		m_vertexCount = count;
-		
+		m_vertexCount = vertexCount;
 		glGenBuffers(1, &m_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-		glBufferData(GL_ARRAY_BUFFER, size * count, data, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, totalSizeBytes, data, GL_STATIC_DRAW);
 	}
+
 	void VertexBuffer::CreateIndexBuffer(GLenum indexType, GLsizei count, GLvoid* data)
 	{
 		m_indexType = indexType;
+		m_indexCount = count; 
 
 		glGenBuffers(1, &m_ibo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-		GLsizei index = 0;
+
+		GLsizei indexSize = 0;
 		switch (indexType)
 		{
-		case GL_UNSIGNED_BYTE: index = count * sizeof(GLubyte); break;
-		case GL_UNSIGNED_SHORT: index = count * sizeof(GLushort); break;
-		case GL_UNSIGNED_INT: index = count * sizeof(GLuint); break;
+		case GL_UNSIGNED_BYTE:  indexSize = sizeof(GLubyte);  break;
+		case GL_UNSIGNED_SHORT: indexSize = sizeof(GLushort); break;
+		case GL_UNSIGNED_INT:   indexSize = sizeof(GLuint);   break;
 		}
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, index * count, data, GL_STATIC_DRAW);
+
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * indexSize, data, GL_STATIC_DRAW);
 	}
+
+
+	
 	void VertexBuffer::SetAttribute(int index, GLint size, GLsizei stride, GLuint offset)
 	{
 		glEnableVertexAttribArray(index);

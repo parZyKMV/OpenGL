@@ -88,7 +88,6 @@ int main(int argc, char* argv[]) {
     //textures
     neu::res_t<neu::Texture> texture = neu::Resources().Get<neu::Texture>("textures/cat.jpg");
 
-
 	//projection matrix
 	float aspect = (float)neu::GetEngine().GetRenderer().GetWidth() / (float)neu::GetEngine().GetRenderer().GetHeight();
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspect, 0.01f , 100.0f);
@@ -117,11 +116,16 @@ int main(int argc, char* argv[]) {
         model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
         program->SetUniform("u_model", model);
 
-        //Camera
-
+        
         eye.x += neu::GetEngine().GetInput().GetMouseDelta().x * 0.01f;
-		eye.y -= neu::GetEngine().GetInput().GetMouseDelta().y * 0.01f;
-		glm::mat4 view = glm::lookAt(eye, eye + glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+        eye.y -= neu::GetEngine().GetInput().GetMouseDelta().y * 0.01f;
+
+        
+        float zoomSpeed = 2.0f * neu::GetEngine().GetTime().GetDeltaTime();
+        if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_W)) eye.z -= zoomSpeed; // move closer
+        if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_S)) eye.z += zoomSpeed; // move farther
+
+        glm::mat4 view = glm::lookAt(eye, eye + glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
         program->SetUniform("u_view", view);
 
 
@@ -130,6 +134,7 @@ int main(int argc, char* argv[]) {
         neu::GetEngine().GetRenderer().Clear();
 
 		//vb->Draw(GL_TRIANGLES);
+        
 		model3d->Draw(GL_TRIANGLES);
 
         neu::GetEngine().GetRenderer().Present();
