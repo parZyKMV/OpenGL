@@ -69,14 +69,17 @@ int main(int argc, char* argv[]) {
 
     // Create shaders using the new Shader class
     auto vs = std::make_shared<neu::Shader>();
-    vs->Load("shaders/basic.vert", GL_VERTEX_SHADER);
+    vs->Load("shaders/basic.lit.vert", GL_VERTEX_SHADER);
 
     auto fs = std::make_shared<neu::Shader>();
-    fs->Load("shaders/basic.frag", GL_FRAGMENT_SHADER);
+    fs->Load("shaders/basic.lit.frag", GL_FRAGMENT_SHADER);
 
     //transform
 	float rotation = 0.0f;
 	glm::vec3 eye = { 0, 0, 5 };
+
+	neu::Transform transform{ {0,0,0} };
+	neu::Transform cameraTransform{ {0,0,3} };
 
     auto program = std::make_shared<neu::Program>();
     program->AttachShader(vs);
@@ -87,6 +90,9 @@ int main(int argc, char* argv[]) {
     
     //textures
     neu::res_t<neu::Texture> texture = neu::Resources().Get<neu::Texture>("textures/cat.jpg");
+
+	//set light uniforms
+	program->SetUniform("u_lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//projection matrix
 	float aspect = (float)neu::GetEngine().GetRenderer().GetWidth() / (float)neu::GetEngine().GetRenderer().GetHeight();
@@ -104,33 +110,26 @@ int main(int argc, char* argv[]) {
         }
 
         neu::GetEngine().Update();
+		float dt = neu::GetEngine().GetTime().GetDeltaTime();
 
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
 
-		rotation += neu::GetEngine().GetTime().GetDeltaTime() * 90;
+		transform.rotation.y += 90 * dt;
+		program->SetUniform("u_model", transform.GetMatrix());
 
-		//view
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-        program->SetUniform("u_model", model);
-
-        
-        eye.x += neu::GetEngine().GetInput().GetMouseDelta().x * 0.01f;
-        eye.y -= neu::GetEngine().GetInput().GetMouseDelta().y * 0.01f;
-
-        
-        float zoomSpeed = 2.0f * neu::GetEngine().GetTime().GetDeltaTime();
-        if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_W)) eye.z -= zoomSpeed; // move closer
-        if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_S)) eye.z += zoomSpeed; // move farther
-
-        glm::mat4 view = glm::lookAt(eye, eye + glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+		//view matrix
+        float speed = 10.0f;
+		if (neu::GetEngine().GetInput().GetKeyDown(SDL_SCANCODE_A))cameraTransform.position.x -= speed * dt;
+		if (neu::GetEngine().GetInput().GetKeyDown(SDL_SCANCODE_D))cameraTransform.position.x += speed * dt;
+		if (neu::GetEngine().GetInput().GetKeyDown(SDL_SCANCODE_W))cameraTransform.position.y -= speed * dt;
+		if (neu::GetEngine().GetInput().GetKeyDown(SDL_SCANCODE_S))cameraTransform.position.y += speed * dt;
+		if (neu::GetEngine().GetInput().GetKeyDown(SDL_SCANCODE_D))cameraTransform.position.z -= speed * dt;
+		if (neu::GetEngine().GetInput().GetKeyDown(SDL_SCANCODE_D))cameraTransform.position.z += speed * dt;
+		glm::mat4 view = glm::lookAt(cameraTransform.position, cameraTransform.position + glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
         program->SetUniform("u_view", view);
 
 
 
-        neu::vec3 color{ 0, 0, 0 };
         neu::GetEngine().GetRenderer().Clear();
 
 		//vb->Draw(GL_TRIANGLES);
