@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Vector2.h"
+#include "GUI.h"
 #include "Core/Serializable.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -9,7 +9,7 @@
 
 namespace neu {
 
-    struct Transform : public ISerializable {
+    struct Transform : public ISerializable , GUI{
         glm::vec3 position{ 0.0f, 0.0f, 0.0f };
         glm::vec3 rotation{ 0.0f, 0.0f, 0.0f }; // in degrees
         glm::vec3 scale{ 1.0f, 1.0f, 1.0f };
@@ -44,6 +44,8 @@ namespace neu {
         }
 
         void Read(const serial_data_t& value) override;
+
+        void UpdateGui() override;
     };
 
 } 

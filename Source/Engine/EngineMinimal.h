@@ -48,6 +48,7 @@
 #include "Renderer/Program.h"
 #include "Renderer/VetexBuffer.h"
 #include "Renderer/Model.h"
+#include "Renderer/Material.h"
 
 
 // physics

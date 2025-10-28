@@ -21,7 +21,9 @@ uniform struct Light {
 
 uniform struct Material
 {
-    sampler2D texture;
+    sampler2D baseMap;
+    vec3 baseColor;
+
     float shininess;
     vec2 tiling;
     vec2 offset;
@@ -35,7 +37,7 @@ vec3 calculateLight(in vec3 position, in vec3 normal)
 
     // Diffuse lighting (Lambertian)
     float intensity = max(dot(normal, light_dir), 0.0);
-    vec3 diffuse = u_light.color * intensity;
+    vec3 diffuse = u_light.color * intensity * u_material.baseColor;
 
     vec3 reflection = reflect(-light_dir, normal);
     vec3 view_dir = normalize(-position); // Assuming camera is at origin
@@ -51,11 +53,11 @@ vec3 calculateLight(in vec3 position, in vec3 normal)
 
 void main()
 {
-    v_texcoord = a_texcoord;
+    v_texcoord = a_texcoord * u_material.tiling + u_material.offset;
 
     // Transform vertex position and normal
     mat4 model_view = u_view * u_model;
-    vec3 position = vec3(model_view * vec4(a_position, 1.0));
+    vec3 position = vec3(model_view * vec4(a_position, 1));
     vec3 normal = normalize(mat3(model_view) * a_normal);
 
     // ✅ Pass position & normal to lighting function

@@ -253,7 +253,10 @@
     <ClInclude Include="Renderer\Model.h">
       <Filter>Source\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
+    <ClInclude Include="GUI.h">
+      <Filter>Source\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Material.h">
       <Filter>Source\Renderer</Filter>
     </ClInclude>
   </ItemGroup>

@@ -82,7 +82,8 @@ int main(int argc, char* argv[]) {
 	neu::Transform cameraTransform{ {0,0,3} };
 
 	auto material = neu::Resources().Get<neu::Material>("materials/spot.mat");
-	material->Bind();
+	material->program->Use();
+	
 
 	auto program = neu::Resources().Get<neu::Program>("shaders/basic_lit.prog");
     program->Use();
@@ -116,7 +117,7 @@ int main(int argc, char* argv[]) {
 
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
 
-		transform.rotation.y += 90 * dt;
+		//transform.rotation.y += 90 * dt;
 		program->SetUniform("u_model", transform.GetMatrix());
 
 		//view matrix
@@ -142,6 +143,8 @@ int main(int argc, char* argv[]) {
         ImGui::Begin("Editor");
         ImGui::Text("Hello World");
         ImGui::Text("Press 'Esc' to quit.");
+		transform.UpdateGui();
+		material->UpdateGui();
         ImGui::End();
         
 		model3d->Draw(GL_TRIANGLES);
