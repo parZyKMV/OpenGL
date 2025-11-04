@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 
 	//scene
     auto scene = std::make_unique<neu::Scene>();
-    scene->Load("scenes/scene01.json");
+    scene->Load("scenes/scene02.json");
 	scene->Start();
 
 	auto editor = std::make_shared<neu::Editor>();
@@ -34,10 +34,8 @@ int main(int argc, char* argv[]) {
 		editor->UpdateGui(*scene);
        
         neu::GetEngine().GetRenderer().Clear();
-
       
 		scene->Draw(neu::GetEngine().GetRenderer());
-		
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

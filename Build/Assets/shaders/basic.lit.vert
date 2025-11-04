@@ -4,8 +4,11 @@ layout (location = 0) in vec3 a_position;
 layout (location = 1) in vec2 a_texcoord;
 layout (location = 2) in vec3 a_normal;
 
-out vec2 v_texcoord;
-out vec3 v_color;
+out VS_OUT
+{
+    vec2 texcoord;
+    vec3 color;
+} vs_out;
 
 uniform float u_time;
 uniform mat4 u_model;
@@ -14,55 +17,63 @@ uniform mat4 u_projection;
 
 uniform vec3 u_ambient_light;
 
-uniform struct Light {
+float calculateAttenuation(float light_distance, float range)
+{
+    float attenuation = max(0.0, 1.0 - (light_distance / range));
+    return attenuation * attenuation;
+}
+
+struct Light {
     vec3 position;
     vec3 color;
-} u_light;
+    float intensity;
+    float range;
+};
 
-uniform struct Material
-{
+struct Material {
     sampler2D baseMap;
     vec3 baseColor;
-
     float shininess;
     vec2 tiling;
     vec2 offset;
-}u_material;
+};
 
+uniform int u_numLights;
+uniform Light u_lights[5];
+uniform Material u_material;
 
-vec3 calculateLight(in vec3 position, in vec3 normal)
+vec3 calculateLight(in Light light, in vec3 position, in vec3 normal)
 {
-    // Direction from surface to light
-    vec3 light_dir = normalize(u_light.position - position);
+    vec3 light_dir = normalize(light.position - position);
 
-    // Diffuse lighting (Lambertian)
-    float intensity = max(dot(normal, light_dir), 0.0);
-    vec3 diffuse = u_light.color * intensity * u_material.baseColor;
+    float diff = max(dot(normal, light_dir), 0.0);
+    vec3 diffuse = light.color * diff * u_material.baseColor;
 
     vec3 reflection = reflect(-light_dir, normal);
-    vec3 view_dir = normalize(-position); // Assuming camera is at origin
-    intensity = max(dot(reflection, view_dir), 0);
-    intensity = pow(intensity,u_material.shininess);
-    vec3 specular = vec3(intensity);
+    vec3 view_dir = normalize(-position); 
+    float spec = pow(max(dot(reflection, view_dir), 0.0), u_material.shininess);
+    vec3 specular = vec3(spec);
 
+    float light_distance = length(light.position - position);
+    float attenuation = calculateAttenuation(light_distance, light.range);
 
-
-    // Final light (ambient + diffuse)
-    return u_ambient_light + diffuse + specular;
+    return (diffuse + specular) * light.intensity * attenuation;
 }
 
 void main()
 {
-    v_texcoord = a_texcoord * u_material.tiling + u_material.offset;
+    vs_out.texcoord = a_texcoord * u_material.tiling + u_material.offset;
 
-    // Transform vertex position and normal
     mat4 model_view = u_view * u_model;
-    vec3 position = vec3(model_view * vec4(a_position, 1));
+    vec3 position = vec3(model_view * vec4(a_position, 1.0));
     vec3 normal = normalize(mat3(model_view) * a_normal);
 
-    // ✅ Pass position & normal to lighting function
-    v_color = calculateLight(position, normal);
+    vs_out.color = u_ambient_light * u_material.baseColor;
 
-    // Final vertex position
+    for (int i = 0; i < u_numLights; i++)
+    {
+        vs_out.color += calculateLight(u_lights[i], position, normal);
+    }
+
     gl_Position = u_projection * u_view * u_model * vec4(a_position, 1.0);
 }

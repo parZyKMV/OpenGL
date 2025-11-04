@@ -65,5 +65,8 @@
     <None Include="..\..\Build\Assets\materials\Halloween.mat">
       <Filter>Assets\Materials</Filter>
     </None>
+    <None Include="..\..\Build\Assets\scenes\scene02.json">
+      <Filter>Assets\scene</Filter>
+    </None>
   </ItemGroup>
 </Project>
