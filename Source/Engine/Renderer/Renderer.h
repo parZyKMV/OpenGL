@@ -1,15 +1,14 @@
 #pragma once
-// Primero SDL y GLAD
+
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
 
-// Luego defines de ImGui
+
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_opengl3.h>
 
-// (después de esto, ya puedes incluir glm, iostream, etc.)
 #include <glm/glm.hpp>
 #include <iostream>
 

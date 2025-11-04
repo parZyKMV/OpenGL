@@ -28,7 +28,6 @@ namespace neu
 		}
 
 		glBindVertexArray(0); 
-		LOG_INFO("Drawing mesh with {} vertices and {} indices", m_vertexCount, m_indexCount);
 	}
 
 	void VertexBuffer::CreateVertexBuffer(GLsizei totalSizeBytes, GLsizei vertexCount, GLvoid* data)

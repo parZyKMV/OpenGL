@@ -50,6 +50,15 @@
 #include "Renderer/Model.h"
 #include "Renderer/Material.h"
 
+//components
+#include "Components/CameraComponent.h"
+#include "Components/LightComponent.h"
+#include "Components/FirstPersonController.h"
+#include "Components/ModelRenderer.h"
+
+//GUI
+#include "GUI/GUI.h"
+#include "GUI/Editor.h"
 
 // physics
 #include "Physics/Collidable.h"
@@ -73,6 +82,7 @@
 #include <random>
 #include <algorithm>
 #include <cmath>
+#include <set>
 #include <filesystem>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

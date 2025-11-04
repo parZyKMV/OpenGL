@@ -18,7 +18,8 @@ namespace neu {
 		//texture
 		std::string textureName;
 		SERIAL_READ_NAME(document, "texture", textureName);
-		baseMap = Resources().Get<Texture>(programName);
+		baseMap = Resources().Get<Texture>(textureName);
+
 
 		textureName = "";
 		SERIAL_READ_NAME(document, "specularMap", textureName);
@@ -40,7 +41,7 @@ namespace neu {
 		}
 
 		if (specularMap) {
-			specularMap->SetActive(GL_TEXTURE0);
+			specularMap->SetActive(GL_TEXTURE1);
 			specularMap->Bind();
 		}
 
@@ -51,17 +52,21 @@ namespace neu {
 	}
 
 	void Material::UpdateGui() {
-		if (!ImGui::CollapsingHeader("Material",ImGuiTreeNodeFlags_DefaultOpen)) {
-			/*ImGui::Text("Name: %s", name.c_str());
-			ImGui::Text("Shader: %s", program->name.c_str());
-			if(baseMap)
-				ImGui::Text("Base Map: %s", baseMap->name.c_str());
-			else
-				ImGui::Text("Base Map: None");*/
-			ImGui::ColorEdit3("Base Color", &baseColor[0]);
-			ImGui::DragFloat("Shininess", &shininess, 1.0f);
-			ImGui::DragFloat2("Tiling", glm::value_ptr(tiling), 0.1f);
-			ImGui::DragFloat2("Offset", glm::value_ptr(offset), 0.1f);
+		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
+			bool updated = false;
+			updated |= ImGui::ColorEdit3("Base Color", glm::value_ptr(baseColor));
+			updated |= ImGui::DragFloat("Shininess", &shininess, 1.0f);
+			updated |= ImGui::DragFloat2("Tiling", glm::value_ptr(tiling), 0.1f);
+			updated |= ImGui::DragFloat2("Offset", glm::value_ptr(offset), 0.1f);
+
+			if (updated && program) {
+				program->Use();
+				program->SetUniform("u_material.baseColor", baseColor);
+				program->SetUniform("u_material.shininess", shininess);
+				program->SetUniform("u_material.tiling", tiling);
+				program->SetUniform("u_material.offset", offset);
+			}
 		}
 	}
+
 }

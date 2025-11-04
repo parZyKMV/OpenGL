@@ -1,8 +1,8 @@
 {
 	"program" : "shaders/basic_lit.prog",
-	"texture" : "textures/spot_difusse.png",
+	"texture" : "textures/spot_diffuse.png",
 	"baseColor" : [1, 0, 0],
 	"shininess" : 128,
 	"tiling" : [ 1,1 ],
-	"offset" : [ 0, 0],
+	"offset" : [ 0, 0]
 }

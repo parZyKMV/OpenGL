@@ -134,6 +134,22 @@ namespace neu {
 		}
 	}
 
+	void Actor::UpdateGui()
+	{
+		ImGui::Text("Name: %s", name.c_str());
+		ImGui::Text("Tag: %s", tag.c_str());
+		ImGui::Checkbox("Active", &active);
+		// transform information
+		ImGui::Separator();
+		transform.UpdateGui();
+
+		for(auto& component : m_components)
+		{
+			ImGui::Separator();
+			component->UpdateGui();
+		}
+	}
+
 	/// <summary>
 	/// Adds a component to the actor.
 	/// 
