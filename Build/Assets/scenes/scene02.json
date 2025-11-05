@@ -37,7 +37,7 @@
 			]
 		},
 		{
-			"name": "light",
+			"name": "light_1",
 			"persistent": true,
 			"transform": {
 				"position": [ 5, 5, 0 ],
@@ -54,7 +54,7 @@
 			]
 		},
 		{
-			"name": "light",
+			"name": "light_2",
 			"persistent": true,
 			"transform": {
 				"position": [ 5, 5, 0 ],
@@ -71,7 +71,7 @@
 			]
 		},
 		{
-			"name": "light",
+			"name": "light_3",
 			"persistent": true,
 			"transform": {
 				"position": [ 5, 5, 0 ],
