@@ -1,5 +1,11 @@
 ﻿#version 460 core
 
+#define MAX_LIGHTS 5
+#define POINT 0
+#define DIRECTONIAL 1
+#define SPOT 2
+
+
 layout (location = 0) in vec3 a_position;
 layout (location = 1) in vec2 a_texcoord;
 layout (location = 2) in vec3 a_normal;
@@ -17,17 +23,15 @@ uniform mat4 u_projection;
 
 uniform vec3 u_ambient_light;
 
-float calculateAttenuation(float light_distance, float range)
-{
-    float attenuation = max(0.0, 1.0 - (light_distance / range));
-    return attenuation * attenuation;
-}
 
 struct Light {
+    int type;
     vec3 position;
+    vec3 direction;
     vec3 color;
     float intensity;
     float range;
+    float outerCutoff;
 };
 
 struct Material {
@@ -42,9 +46,35 @@ uniform int u_numLights;
 uniform Light u_lights[5];
 uniform Material u_material;
 
+float calculateAttenuation(float light_distance, float range)
+{
+    float attenuation = max(0.0, 1.0 - (light_distance / range));
+    return attenuation * attenuation;
+}
+
 vec3 calculateLight(in Light light, in vec3 position, in vec3 normal)
 {
-    vec3 light_dir = normalize(light.position - position);
+    float attenuation = 1.0;
+    vec3 light_dir;
+    switch(light.type)
+    {
+        case POINT:
+            light_dir = normalize(light.position - position);
+            float light_distance = length(light.position - position);
+            attenuation = calculateAttenuation(light_distance, light.range);
+        break;
+
+        case DIRECTONIAL:
+            light_dir = normalize(light.direction);
+            attenuation = 1.0;
+        break;
+
+        case SPOT:
+        break;
+        
+    }
+
+
 
     float diff = max(dot(normal, light_dir), 0.0);
     vec3 diffuse = light.color * diff * u_material.baseColor;
@@ -53,9 +83,6 @@ vec3 calculateLight(in Light light, in vec3 position, in vec3 normal)
     vec3 view_dir = normalize(-position); 
     float spec = pow(max(dot(reflection, view_dir), 0.0), u_material.shininess);
     vec3 specular = vec3(spec);
-
-    float light_distance = length(light.position - position);
-    float attenuation = calculateAttenuation(light_distance, light.range);
 
     return (diffuse + specular) * light.intensity * attenuation;
 }

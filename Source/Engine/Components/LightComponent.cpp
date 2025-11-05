@@ -8,9 +8,11 @@ namespace neu {
 	void LightComponent::SetProgram(Program& program, const std::string& name, const glm::mat4& view)
 	{
 		glm::vec3 position = glm::vec3(view * glm::vec4(owner->transform.position, 1));
+		glm::vec3 direction = owner->transform.Forward();
 
 		program.SetUniform(name + ".type", (int*)LightType);
 		program.SetUniform(name + ".position", position);
+		program.SetUniform(name + ".direction", direction);
 		program.SetUniform(name + ".color", color);
 		program.SetUniform(name + ".intensity", intensity);
 		program.SetUniform(name + ".range", range);
@@ -34,7 +36,7 @@ namespace neu {
 
 		if (LightType == LightType::Spot)
 		{
-		ImGui::DragFloat("OuterCutoff", &outerCutoff, 0.1f, 0.0f);
+		ImGui::DragFloat("Outer Cutoff", &outerCutoff, 0.1f, 0.0f);
 		}
 	}
 }
