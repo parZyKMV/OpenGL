@@ -25,6 +25,7 @@ namespace neu {
 		float intensity{1};
 		float range{20};
 		LightType LightType = LightType::Point;
-		float outerCutoff = 20.0f;
+		float outerSpotAngle = 20.0f;
+		float innerSpotAngle = 20.0f;
 	};
 }

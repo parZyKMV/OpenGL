@@ -1,10 +1,9 @@
 ﻿#version 460 core
 
-#define MAX_LIGHTS 5
-#define POINT 0
-#define DIRECTONIAL 1
-#define SPOT 2
-
+#define MX_LIGHTS   5
+#define POINT       0
+#define DIRECTIONAL 1
+#define SPOT        2
 
 layout (location = 0) in vec3 a_position;
 layout (location = 1) in vec2 a_texcoord;
@@ -23,6 +22,11 @@ uniform mat4 u_projection;
 
 uniform vec3 u_ambient_light;
 
+float calculateAttenuation(float dist, float range)
+{
+    float att = max(0.0, 1.0 - dist / range);
+    return att * att;
+}
 
 struct Light {
     int type;
@@ -31,7 +35,8 @@ struct Light {
     vec3 color;
     float intensity;
     float range;
-    float outerCutoff;
+    float outerSpotAngle;
+    float innerSpotAngle;
 };
 
 struct Material {
@@ -45,42 +50,55 @@ struct Material {
 uniform int u_numLights;
 uniform Light u_lights[5];
 uniform Material u_material;
-
-float calculateAttenuation(float light_distance, float range)
-{
-    float attenuation = max(0.0, 1.0 - (light_distance / range));
-    return attenuation * attenuation;
-}
+uniform sampler2D u_baseMap;
 
 vec3 calculateLight(in Light light, in vec3 position, in vec3 normal)
 {
     float attenuation = 1.0;
-    vec3 light_dir;
+    vec3 light_dir = vec3(0);
+
     switch(light.type)
     {
         case POINT:
+        {
             light_dir = normalize(light.position - position);
-            float light_distance = length(light.position - position);
-            attenuation = calculateAttenuation(light_distance, light.range);
-        break;
+            float dist = length(light.position - position);
+            attenuation = calculateAttenuation(dist, light.range);
+        } break;
 
-        case DIRECTONIAL:
+        case DIRECTIONAL:
+        {
             light_dir = normalize(light.direction);
-            attenuation = 1.0;
-        break;
+        } break;
 
         case SPOT:
+            {
+            light_dir = normalize(light.position - position);
+
+            float dist = length(light.position - position);
+            attenuation = calculateAttenuation(dist, light.range);
+
+    
+            float theta = acos(dot(light_dir, light.direction));
+            if(theta > light.outerSpotAngle)
+            {
+                attenuation = 0.0;
+             }else{
+                float spotAttenuation = smoothstep(light.outerSpotAngle, light.innerSpotAngle,theta);
+                attenuation *= spotAttenuation;
+             }
+            
+        }
         break;
+
         
     }
-
-
 
     float diff = max(dot(normal, light_dir), 0.0);
     vec3 diffuse = light.color * diff * u_material.baseColor;
 
     vec3 reflection = reflect(-light_dir, normal);
-    vec3 view_dir = normalize(-position); 
+    vec3 view_dir = normalize(-position);
     float spec = pow(max(dot(reflection, view_dir), 0.0), u_material.shininess);
     vec3 specular = vec3(spec);
 
@@ -93,14 +111,15 @@ void main()
 
     mat4 model_view = u_view * u_model;
     vec3 position = vec3(model_view * vec4(a_position, 1.0));
-    vec3 normal = normalize(mat3(model_view) * a_normal);
+
+    mat3 normal_matrix = transpose(inverse(mat3(model_view)));
+    vec3 normal = normalize(normal_matrix * a_normal);
 
     vs_out.color = u_ambient_light * u_material.baseColor;
 
-    for (int i = 0; i < u_numLights; i++)
-    {
+    for(int i = 0; i < u_numLights; i++)
         vs_out.color += calculateLight(u_lights[i], position, normal);
-    }
 
     gl_Position = u_projection * u_view * u_model * vec4(a_position, 1.0);
 }
+

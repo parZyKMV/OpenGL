@@ -208,6 +208,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Build\Assets\materials\create.mat" />
     <None Include="..\..\Build\Assets\materials\Halloween.mat" />
     <None Include="..\..\Build\Assets\materials\spot.mat" />
     <None Include="..\..\Build\Assets\scenes\scene01.json" />

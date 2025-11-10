@@ -29,16 +29,16 @@ vec3 calculateLight(in vec3 position, in vec3 normal) {
     vec3 light_dir = normalize(u_light.position - position);
     vec3 view_dir = normalize(u_viewPosition - position);
 
-    // Difusa
+    
     float diff = max(dot(norm, light_dir), 0.0);
     vec3 diffuse = diff * u_light.color;
 
-    // Especular
+    
     vec3 reflect_dir = reflect(-light_dir, norm);
     float spec = pow(max(dot(view_dir, reflect_dir), 0.0), u_material.shininess);
     vec3 specular = spec * u_light.color;
 
-    // Resultado final
+    
     return u_ambient_light + diffuse + specular;
 }
 

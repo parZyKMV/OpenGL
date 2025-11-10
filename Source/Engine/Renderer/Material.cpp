@@ -25,6 +25,14 @@ namespace neu {
 		SERIAL_READ_NAME(document, "specularMap", textureName);
 		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
 
+		textureName = "";
+		SERIAL_READ_NAME(document, "emissiveMap", textureName);
+		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
+
+		textureName = "";
+		SERIAL_READ_NAME(document, "specularMap", textureName);
+		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
+
 		SERIAL_READ(document, baseColor);
 		SERIAL_READ(document, shininess);
 		SERIAL_READ(document, tiling);
@@ -45,7 +53,13 @@ namespace neu {
 			specularMap->Bind();
 		}
 
+		if (emissiveMap) {
+			specularMap->SetActive(GL_TEXTURE1);
+			specularMap->Bind();
+		}
+
 		program->SetUniform("u_material.baseColor", baseColor);
+		program->SetUniform("u_material.emissiveColor", emissiveColor);
 		program->SetUniform("u_material.shininess", shininess);
 		program->SetUniform("u_material.tiling", tiling);
 		program->SetUniform("u_material.offset", offset);
@@ -53,8 +67,10 @@ namespace neu {
 
 	void Material::UpdateGui() {
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
+			//ImGui::Text("Name: %s", name.c_str())
 			bool updated = false;
 			updated |= ImGui::ColorEdit3("Base Color", glm::value_ptr(baseColor));
+			updated |= ImGui::ColorEdit3("Emissive Color", glm::value_ptr(emissiveColor));
 			updated |= ImGui::DragFloat("Shininess", &shininess, 1.0f);
 			updated |= ImGui::DragFloat2("Tiling", glm::value_ptr(tiling), 0.1f);
 			updated |= ImGui::DragFloat2("Offset", glm::value_ptr(offset), 0.1f);

@@ -1,29 +1,23 @@
 #version 460 core
 
-in VS_OUT
-{
+in VS_OUT {
     vec2 texcoord;
     vec3 color;
 } fs_in;
 
+uniform sampler2D u_texture;
+
 out vec4 f_color;
-
-uniform struct Material
-{
-    sampler2D baseMap;
-    vec3 baseColor;
-
-    float shininess;
-    vec2 tiling;
-    vec2 offset;
-}u_material;
-
-
-uniform float u_time;
-//uniform sampler2D u_texture;
 
 void main()
 {
-    f_color =  texture(u_material.baseMap, fs_in.texcoord) * vec4(fs_in.color,1);
-    //f_color = vec4(fs_in.color,1);
+    //vec3 color = u_ambient_light;
+    //for(int i = 0; i < u_num_lights; i++)
+    //{
+        //vec3 light_dir = normalize(u_lights[i].position - fs_in.world_pos);
+    //}
+
+
+    vec3 tex = texture(u_texture, fs_in.texcoord).rgb;
+    //f_color = vec4(tex * fs_in.color, 1.0);
 }
