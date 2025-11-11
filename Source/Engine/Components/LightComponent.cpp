@@ -16,13 +16,13 @@ namespace neu {
 		program.SetUniform(name + ".color", color);
 		program.SetUniform(name + ".intensity", intensity);
 		program.SetUniform(name + ".range", range);
-		program.SetUniform(name + ".outerSpotAngle", glm::radians(outerSpotAngle));
 		program.SetUniform(name + ".innerSpotAngle", glm::radians(innerSpotAngle));
+		program.SetUniform(name + ".outerSpotAngle", glm::radians(outerSpotAngle));
 	}
 	void LightComponent::Read(const serial_data_t& value)
 	{
 		std::string type;
-		SERIAL_READ(value, type);
+		SERIAL_READ_NAME(value,"LightType", type);
 		if(equalsIgnoreCase(type, "point")) LightType = LightType::Point;
 		else if (equalsIgnoreCase(type, "directional")) LightType = LightType::Directional;
 		else if (equalsIgnoreCase(type, "spot")) LightType = LightType::Spot;
@@ -30,8 +30,8 @@ namespace neu {
 		SERIAL_READ(value, color);
 		SERIAL_READ(value, intensity);
 		SERIAL_READ(value, range);
-		SERIAL_READ(value, outerSpotAngle);
 		SERIAL_READ(value, innerSpotAngle);
+		SERIAL_READ(value, outerSpotAngle);
 	}
 	void LightComponent::UpdateGui()
 	{

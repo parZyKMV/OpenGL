@@ -39,5 +39,6 @@ namespace neu {
 		glm::vec2 offset{ 0,0 };
 
 		//Parameters
+		
 	};
 }
