@@ -50,13 +50,13 @@
     <None Include="..\..\Build\Assets\materials\spot.mat">
       <Filter>Assets\Materials</Filter>
     </None>
-    <None Include="..\..\Build\Assets\shaders\basic_phong.frag">
+    <None Include="..\..\Build\Assets\shaders\lit_phong.frag">
       <Filter>Assets\Shaders</Filter>
     </None>
-    <None Include="..\..\Build\Assets\shaders\basic_phong.vert">
+    <None Include="..\..\Build\Assets\shaders\lit_phong.vert">
       <Filter>Assets\Shaders</Filter>
     </None>
-    <None Include="..\..\Build\Assets\shaders\basic_phong.prog">
+    <None Include="..\..\Build\Assets\shaders\lit_phong.prog">
       <Filter>Assets\Shaders</Filter>
     </None>
     <None Include="..\..\Build\Assets\scenes\scene01.json">

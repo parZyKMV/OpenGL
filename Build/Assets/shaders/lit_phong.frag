@@ -1,32 +1,22 @@
-﻿#version 460 core
+#version 460 core
 
 #define MX_LIGHTS   5
 #define POINT       0
 #define DIRECTIONAL 1
 #define SPOT        2
 
-layout (location = 0) in vec3 a_position;
-layout (location = 1) in vec2 a_texcoord;
-layout (location = 2) in vec3 a_normal;
+#define BASE_MAP	 (1 << 0)
+#define SPECULAR_MAP (1 << 1)
+#define EMISSIVE_MAP (1 << 2)
 
-out VS_OUT
-{
-    vec2 texcoord;
-    vec3 color;
-} vs_out;
 
-uniform float u_time;
-uniform mat4 u_model;
-uniform mat4 u_view;
-uniform mat4 u_projection;
+in VS_OUT{
+    vec2 v_texcoord;
+    vec3 v_position; 
+    vec3 v_normal;
+}fs_in;
 
-uniform vec3 u_ambient_light;
-
-float calculateAttenuation(float dist, float range)
-{
-    float att = max(0.0, 1.0 - dist / range);
-    return att * att;
-}
+out vec4 f_color;
 
 struct Light {
     int type;
@@ -40,17 +30,29 @@ struct Light {
 };
 
 struct Material {
-    sampler2D baseMap;
     vec3 baseColor;
+    vec3 emissiveColor;
     float shininess;
     vec2 tiling;
     vec2 offset;
+    uint parameters;
 };
 
+uniform vec3 u_ambient_light;
 uniform int u_numLights;
 uniform Light u_lights[MX_LIGHTS];
 uniform Material u_material;
+
 uniform sampler2D u_baseMap;
+uniform sampler2D u_specularMap;
+uniform sampler2D u_emissiveMap;
+
+float calculateAttenuation(float light_distance, float range)
+{
+    float att = max(0.0, 1.0 - light_distance / range);
+    return att * att;
+}
+
 
 vec3 calculateLight(in Light light, in vec3 position, in vec3 normal, in float specularMask)
 {
@@ -95,32 +97,33 @@ vec3 calculateLight(in Light light, in vec3 position, in vec3 normal, in float s
         
     }
 
-    float diff = max(dot(normal, light_dir), 0.0);
-    vec3 diffuse = light.color * diff * u_material.baseColor;
+    float intensity = max(dot(normal, light_dir), 0.0);
+    vec3 diffuse = light.color * intensity;
 
     vec3 reflection = reflect(-light_dir, normal);
     vec3 view_dir = normalize(-position);
-    float spec = pow(max(dot(reflection, view_dir), 0.0), u_material.shininess);
-    vec3 specular = vec3(spec);
+
+    intensity = max(dot(reflection, view_dir), 0.0);
+    intensity = pow(intensity, u_material.shininess);
+
+    vec3 specular = vec3(intensity) * specularMask;
 
     return (diffuse + specular) * light.intensity * attenuation;
 }
 
-void main()
-{
-    vs_out.texcoord = a_texcoord * u_material.tiling + u_material.offset;
-
-    mat4 model_view = u_view * u_model;
-    vec3 position = vec3(model_view * vec4(a_position, 1.0));
-
-    mat3 normal_matrix = transpose(inverse(mat3(model_view)));
-    vec3 normal = normalize(normal_matrix * a_normal);
-
-    vs_out.color = u_ambient_light * u_material.baseColor;
-
-    for(int i = 0; i < u_numLights; i++)
-        vs_out.color += calculateLight(u_lights[i], position, normal);
-
-    gl_Position = u_projection * u_view * u_model * vec4(a_position, 1.0);
+void main() {
+	float specularMask = ((u_material.parameters & SPECULAR_MAP) != 0u)
+		? texture(u_specularMap, fs_in.v_texcoord).r
+		: 1.0;
+ 
+	vec3 color = u_ambient_light;
+	for (int i = 0; i < u_numLights; i++) {
+		color += calculateLight(u_lights[i], fs_in.v_position, fs_in.v_normal, specularMask);
+	}
+ 
+	vec4 emissive = ((u_material.parameters & EMISSIVE_MAP) != 0u)
+		? texture(u_emissiveMap, fs_in.v_texcoord) * vec4(u_material.emissiveColor, 1)
+		: vec4(u_material.emissiveColor, 1);
+ 
+	f_color = texture(u_baseMap, fs_in.v_texcoord) * vec4(color, 1) + emissive;
 }
-
