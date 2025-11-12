@@ -33,6 +33,14 @@ namespace neu {
 		SERIAL_READ_NAME(document, "specularMap", textureName);
 		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
 
+		textureName = "";
+		SERIAL_READ_NAME(document, "normalMap", textureName);
+		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
+
+		textureName = "";
+		SERIAL_READ_NAME(document, "cubeMap", textureName);
+		if(!textureName.empty()) specularMap = Resources().Get<CubeMap>(textureName);
+
 		SERIAL_READ(document, baseColor);
 		SERIAL_READ(document, shininess);
 		SERIAL_READ(document, tiling);
@@ -46,16 +54,36 @@ namespace neu {
 		if (baseMap) {
 			baseMap->SetActive(GL_TEXTURE0);
 			baseMap->Bind();
+			program->SetUniform("u_cubeMap", 0);
+			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::BaseMap);
 		}
 
 		if (specularMap) {
 			specularMap->SetActive(GL_TEXTURE1);
 			specularMap->Bind();
+			program->SetUniform("u_cubeMap", 1);
+			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::SpecularMap);
 		}
 
 		if (emissiveMap) {
 			specularMap->SetActive(GL_TEXTURE1);
 			specularMap->Bind();
+			program->SetUniform("u_cubeMap", 2);
+			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::EmissiveMap);
+		}
+
+		if (normalMap) {
+			normalMap->SetActive(GL_TEXTURE1);
+			specularMap->Bind();
+			program->SetUniform("u_cubeMap", 3);
+			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::NormalMap);
+		}
+
+		if (cubeMap) {
+			cubeMap->SetActive(GL_TEXTURE1);
+			specularMap->Bind();
+			program->SetUniform("u_cubeMap", 4);
+			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::CubeMap);
 		}
 
 		program->SetUniform("u_material.baseColor", baseColor);

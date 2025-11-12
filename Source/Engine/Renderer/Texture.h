@@ -40,9 +40,9 @@ namespace neu {
 		// Allow Renderer class to access the texture for drawing operations
 		friend class Renderer;
 
-	private:
-		GLuint m_texture = 0;
 		GLuint m_target = GL_TEXTURE_2D;
+		GLuint m_texture = 0;
+	private:
 
 		// The dimensions of the texture in pixels
 		vec2 m_size{ 0, 0 };

@@ -210,6 +210,7 @@
   <ItemGroup>
     <None Include="..\..\Build\Assets\materials\create.mat" />
     <None Include="..\..\Build\Assets\materials\Halloween.mat" />
+    <None Include="..\..\Build\Assets\materials\skybox.mat" />
     <None Include="..\..\Build\Assets\materials\spot.mat" />
     <None Include="..\..\Build\Assets\scenes\scene01.json" />
     <None Include="..\..\Build\Assets\scenes\scene02.json" />
@@ -221,6 +222,9 @@
     <None Include="..\..\Build\Assets\shaders\basic.lit.vert" />
     <None Include="..\..\Build\Assets\shaders\basic.frag" />
     <None Include="..\..\Build\Assets\shaders\basic.vert" />
+    <None Include="..\..\Build\Assets\shaders\skybox.frag" />
+    <None Include="..\..\Build\Assets\shaders\skybox.prog" />
+    <None Include="..\..\Build\Assets\shaders\skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
