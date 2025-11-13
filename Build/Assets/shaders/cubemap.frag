@@ -8,5 +8,5 @@ uniform samplerCube u_cubeMap;
 
 void main()
 {
-    f_color =  texture(u_texture, v_texcoord);
+    f_color =  texture(u_cubeMap, normalize(v_texcoord));
 }

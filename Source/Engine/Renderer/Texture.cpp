@@ -40,7 +40,7 @@ namespace neu {
 
         glGenTextures(1, &m_texture);
         glBindTexture(m_target, m_texture);
-        glActiveTexture(0);
+        //glActiveTexture(0);
 
         glTexImage2D(m_target, 0, internalFormat, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels);
 
@@ -51,7 +51,7 @@ namespace neu {
         glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glActiveTexture(GL_TEXTURE0);
+        //glActiveTexture(GL_TEXTURE0);
 
         SDL_DestroySurface(surface);
 

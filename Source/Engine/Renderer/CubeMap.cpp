@@ -1,53 +1,57 @@
 #include "CubeMap.h"
 
 namespace neu {
-	bool CubeMap::Load(const std::string& filename) {
-		m_target = GL_TEXTURE_CUBE_MAP;
+    bool CubeMap::Load(const std::string& filename) {
+        m_target = GL_TEXTURE_CUBE_MAP;
 
-		glGenTextures(1, &m_texture);
-		glBindTexture(m_target, m_texture);
+        glGenTextures(1, &m_texture);
+        glBindTexture(m_target, m_texture);
 
-		GLuint targets[] = {
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-			GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-			GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-		};
-		std::vector<std::string> filename_split;
-		std::istringstream stream(filename);
+        GLuint targets[] = {
+            GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+            GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+            GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+        };
 
-		std::string temp_str;
-		while (stream >> temp_str) {
-			filename_split.push_back(temp_str);
-		}
+        std::vector<std::string> filename_split;
+        std::istringstream stream(filename);
+        std::string temp_str;
+        while (stream >> temp_str) {
+            filename_split.push_back(temp_str);
+        }
 
-		for (size_t i = 0; i < filename_split.size(); i++) {
-			SDL_Surface* surface = IMG_Load(filename_split[i].c_str());
-			if (!surface) {
-				LOG_ERROR("Could not load image: {}", filename_split[i]);
-				return false;
-			}
+        if (filename_split.size() != 6) {
+            LOG_ERROR("CubeMap requires exactly 6 image paths, got {}", filename_split.size());
+            return false;
+        }
 
-			const SDL_PixelFormatDetails* details = SDL_GetPixelFormatDetails(surface->format);
+        for (size_t i = 0; i < filename_split.size(); i++) {
+            SDL_Surface* surface = IMG_Load(filename_split[i].c_str());
+            if (!surface) {
+                LOG_ERROR("Could not load image: {}", filename_split[i]);
+                return false;
+            }
 
-			int channels = details->bytes_per_pixel;
-			GLenum internalFormat = (channels == 4) ? GL_RGBA8 : GL_RGB8;
-			GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
+            const SDL_PixelFormatDetails* details = SDL_GetPixelFormatDetails(surface->format);
+            int channels = details->bytes_per_pixel;
+            GLenum internalFormat = (channels == 4) ? GL_RGBA8 : GL_RGB8;
+            GLenum format = (channels == 4) ? GL_RGBA : GL_RGB;
 
-			glTexImage2D(m_target, 0, internalFormat, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels);
+            glTexImage2D(targets[i], 0, internalFormat, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels);
 
-			SDL_DestroySurface(surface);
-		}
+            SDL_DestroySurface(surface);
+        }
 
-		glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(m_target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(m_target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-		return true;
-	}
+        return true;
+    }
 }

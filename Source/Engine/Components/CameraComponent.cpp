@@ -25,6 +25,7 @@ namespace neu {
 	{
 		program.SetUniform("u_view", view);
 		program.SetUniform("u_projection", projection);
+
 	}
 	void CameraComponent::Read(const serial_data_t& value)
 	{

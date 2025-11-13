@@ -1,4 +1,3 @@
-  
 #include "Material.h"      
 #include "Program.h"
 
@@ -10,38 +9,39 @@ namespace neu {
 			LOG_ERROR("Could not load Material json {}", filename);
 			return false;
 		}
+
 		std::string programName;
 		SERIAL_READ_NAME(document, "program", programName);
-
 		program = Resources().Get<Program>(programName);
 
-		//texture
 		std::string textureName;
+
+		// Base map
 		SERIAL_READ_NAME(document, "baseMap", textureName);
-		baseMap = Resources().Get<Texture>(textureName);
+		if (!textureName.empty()) baseMap = Resources().Get<Texture>(textureName);
 
-
+		// Specular map
 		textureName = "";
 		SERIAL_READ_NAME(document, "specularMap", textureName);
-		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
+		if (!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
 
+		// Emissive map
 		textureName = "";
 		SERIAL_READ_NAME(document, "emissiveMap", textureName);
-		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
+		if (!textureName.empty()) emissiveMap = Resources().Get<Texture>(textureName);
 
-		textureName = "";
-		SERIAL_READ_NAME(document, "specularMap", textureName);
-		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
-
+		// Normal map
 		textureName = "";
 		SERIAL_READ_NAME(document, "normalMap", textureName);
-		if(!textureName.empty()) specularMap = Resources().Get<Texture>(textureName);
+		if (!textureName.empty()) normalMap = Resources().Get<Texture>(textureName);
 
+		// Cube map
 		textureName = "";
 		SERIAL_READ_NAME(document, "cubeMap", textureName);
-		if(!textureName.empty()) specularMap = Resources().Get<CubeMap>(textureName);
+		if (!textureName.empty()) cubeMap = Resources().Get<CubeMap>(textureName);
 
 		SERIAL_READ(document, baseColor);
+		SERIAL_READ(document, emissiveColor);
 		SERIAL_READ(document, shininess);
 		SERIAL_READ(document, tiling);
 		SERIAL_READ(document, offset);
@@ -51,51 +51,62 @@ namespace neu {
 
 	void Material::Bind() {
 		program->Use();
+
+		// --- Base Map ---
 		if (baseMap) {
 			baseMap->SetActive(GL_TEXTURE0);
 			baseMap->Bind();
-			program->SetUniform("u_cubeMap", 0);
+			program->SetUniform("u_baseMap", 0);
 			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::BaseMap);
 		}
 
+		// --- Specular Map ---
 		if (specularMap) {
 			specularMap->SetActive(GL_TEXTURE1);
 			specularMap->Bind();
-			program->SetUniform("u_cubeMap", 1);
+			program->SetUniform("u_specularMap", 1);
 			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::SpecularMap);
 		}
 
+		// --- Emissive Map ---
 		if (emissiveMap) {
-			specularMap->SetActive(GL_TEXTURE1);
-			specularMap->Bind();
-			program->SetUniform("u_cubeMap", 2);
+			emissiveMap->SetActive(GL_TEXTURE2);
+			emissiveMap->Bind();
+			program->SetUniform("u_emissiveMap", 2);
 			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::EmissiveMap);
 		}
 
+		// --- Normal Map ---
 		if (normalMap) {
-			normalMap->SetActive(GL_TEXTURE1);
-			specularMap->Bind();
-			program->SetUniform("u_cubeMap", 3);
+			normalMap->SetActive(GL_TEXTURE3);
+			normalMap->Bind();
+			program->SetUniform("u_normalMap", 3);
 			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::NormalMap);
 		}
 
+		// --- Cube Map ---
 		if (cubeMap) {
-			cubeMap->SetActive(GL_TEXTURE1);
-			specularMap->Bind();
+			cubeMap->SetActive(GL_TEXTURE4);
+			cubeMap->Bind();
 			program->SetUniform("u_cubeMap", 4);
 			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::CubeMap);
 		}
 
+		// --- Material uniforms ---
 		program->SetUniform("u_material.baseColor", baseColor);
 		program->SetUniform("u_material.emissiveColor", emissiveColor);
 		program->SetUniform("u_material.shininess", shininess);
 		program->SetUniform("u_material.tiling", tiling);
 		program->SetUniform("u_material.offset", offset);
+		program->SetUniform("u_material.parameters", (uint32_t)parameters);
+
+		program->SetUniform("u_ior", ior);
+
+		
 	}
 
 	void Material::UpdateGui() {
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
-			//ImGui::Text("Name: %s", name.c_str())
 			bool updated = false;
 			updated |= ImGui::ColorEdit3("Base Color", glm::value_ptr(baseColor));
 			updated |= ImGui::ColorEdit3("Emissive Color", glm::value_ptr(emissiveColor));
@@ -106,6 +117,7 @@ namespace neu {
 			if (updated && program) {
 				program->Use();
 				program->SetUniform("u_material.baseColor", baseColor);
+				program->SetUniform("u_material.emissiveColor", emissiveColor);
 				program->SetUniform("u_material.shininess", shininess);
 				program->SetUniform("u_material.tiling", tiling);
 				program->SetUniform("u_material.offset", offset);
