@@ -17,7 +17,7 @@ void main()
     vec3 position = vec3(u_model * vec4(a_position, 1));
     vec3 normal = normalize(mat3(u_model) * a_normal);
 
-    vec3 viewPosition = inverse(u_view)[3].xzy;
+    vec3 viewPosition = vec3(inverse(u_view)[3]);
     vec3 viewDir = normalize(position - viewPosition);
 
     v_texcoord = refract(viewDir, normal, 1.0/ u_ior);

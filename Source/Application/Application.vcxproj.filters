@@ -107,5 +107,8 @@
     <None Include="..\..\Build\Assets\shaders\refraction.prog">
       <Filter>Assets\Shaders</Filter>
     </None>
+    <None Include="..\..\Build\Assets\materials\can.mat">
+      <Filter>Assets\Materials</Filter>
+    </None>
   </ItemGroup>
 </Project>
