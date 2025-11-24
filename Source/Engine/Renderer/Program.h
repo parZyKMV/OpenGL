@@ -40,6 +40,7 @@ namespace neu {
         GLint GetUniformLocation(const std::string& name);
 
     public:
+        void UpdateGui() override {};
         GLuint m_program = 0;
         std::map<std::string, GLint> m_uniformLocations;
     };

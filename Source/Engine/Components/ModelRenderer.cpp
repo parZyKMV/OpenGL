@@ -16,7 +16,9 @@ namespace neu {
 		glDepthMask(enableDepth);
 		glCullFace(cullFace);
 
-		model->Draw(GL_TRIANGLES);
+		if (model) {
+			model->Draw(GL_TRIANGLES);
+		}
 	}
 
 
@@ -44,6 +46,15 @@ namespace neu {
 	}
 	void ModelRenderer::UpdateGui()
 	{
+		std::string text;
+		text = (model) ? model->name : "none";
+		ImGui::Text("Model: %s", text.c_str());
+		Editor::GetDialogResource<Model>(model, "ModelDialog", "Open model", "Model file (*.obj;*.fbx;*.glb;){.obj,.fbx,.glb},.*");
+		text = (material) ? material->name : "none";
+		if (material) {
+			ImGui::Text("Material: %s", text.c_str());
+			Editor::GetDialogResource<Material>(material, "MaterialDialog", "Open material", "Material file (*.mat;){.mat},.*");
+		}
 	}
 }
 

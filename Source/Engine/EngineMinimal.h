@@ -50,12 +50,14 @@
 #include "Renderer/VetexBuffer.h"
 #include "Renderer/Model.h"
 #include "Renderer/Material.h"
+#include "Renderer/RenderTexture.h"
 
 //components
 #include "Components/CameraComponent.h"
 #include "Components/LightComponent.h"
 #include "Components/FirstPersonController.h"
 #include "Components/ModelRenderer.h"
+#include "Components/PostProcessComponent.h"
 
 //GUI
 #include "GUI/GUI.h"

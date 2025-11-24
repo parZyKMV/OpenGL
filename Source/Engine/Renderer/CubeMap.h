@@ -8,5 +8,6 @@ namespace neu
 
 		bool Load(const std::string& filename);
 
+		void UpdateGui() override {};
 	};
 }

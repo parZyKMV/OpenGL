@@ -8,7 +8,7 @@ namespace neu {
     /// cached, and managed by the ResourceManager. All specific resource types
     /// (textures, sounds, models, etc.) should inherit from this class.
     /// </summary>
-    class Resource {
+    class Resource : public GUI {
     public:
         /// <summary>
         /// Default constructor for resource objects.
@@ -23,6 +23,8 @@ namespace neu {
         /// and ensures derived class destructors are called correctly.
         /// </summary>
         virtual ~Resource() = default;
+
+		std::string name;
     };
 
     /// <summary>

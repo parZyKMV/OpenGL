@@ -106,10 +106,18 @@ namespace neu {
 	}
 
 	void Material::UpdateGui() {
+		ImGui::Separator;
+		if (baseMap)
+		{
+			ImGui::Text("Base Map: &s", baseMap->name.c_str());
+			Editor::ShowTexture(*baseMap, 32, 32);
+			Editor::GetDialogResource(baseMap, "BaseMapDialog", "Open Texture", "Image files{.png,.jpg,.jpeg,.bmp}");
+		}
+
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
 			bool updated = false;
 			updated |= ImGui::ColorEdit3("Base Color", glm::value_ptr(baseColor));
-			updated |= ImGui::ColorEdit3("Emissive Color", glm::value_ptr(emissiveColor));
+			updated |= ImGui::ColorEdit3("Specular Color", glm::value_ptr(emissiveColor));
 			updated |= ImGui::DragFloat("Shininess", &shininess, 1.0f);
 			updated |= ImGui::DragFloat2("Tiling", glm::value_ptr(tiling), 0.1f);
 			updated |= ImGui::DragFloat2("Offset", glm::value_ptr(offset), 0.1f);
