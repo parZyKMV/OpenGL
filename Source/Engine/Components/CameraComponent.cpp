@@ -3,10 +3,12 @@
 
 namespace neu {
 	FACTORY_REGISTER(CameraComponent)
-		void CameraComponent::Update(float dt)
+	void CameraComponent::Update(float dt)
 	{
 		view = glm::lookAt(owner->transform.position, owner->transform.position + owner->transform.Forward(), owner->transform.Up());
-		projection = glm::perspective(glm::radians(fov), aspect, near, far);
+		projection = (projectionType == ProjectionType::Perspective)
+			? glm::perspective(glm::radians(fov),aspect,near, far)
+			: glm::ortho(-size * aspect,size * aspect,-size,size,near,far);
 	}
 	void CameraComponent::Clear() {
 		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
@@ -48,6 +50,14 @@ namespace neu {
 		SERIAL_READ(value, clearColorBuffer);
 		SERIAL_READ(value, clearDepthBuffer);
 
+		SERIAL_READ(value, shadowCamera);
+		std::string projectiontypeName;
+		SERIAL_READ_NAME(value, "projectionType", projectiontypeName);
+		if(projectiontypeName.empty() && equalsIgnoreCase(projectiontypeName, "Orthographic"))
+		{
+			projectionType = ProjectionType::Orthographic;
+		}
+
 		std::string outputTextureName;
 		SERIAL_READ_NAME(value, "outputTexture", outputTextureName);
 		if(!outputTextureName.empty())
@@ -57,12 +67,23 @@ namespace neu {
 	}
 	void CameraComponent::UpdateGui()
 	{
+		const char* types[] = { "Perspective", "Orthographic" };
+		ImGui::Combo("Projection Type", (int*)&projectionType, types, 2);
+
+		if (projectionType == ProjectionType::Perspective)
+		{
+			ImGui::DragFloat("FOV", &fov, 0.1f, 10.0f,100.0f);
+		}
+		else {
+			ImGui::DragFloat("Size", &size, 0.1f, 0.1f);
+		}
+
 		ImGui::DragFloat("FOV", &fov, 0.1f, 10.0f, 100.0f);
 		ImGui::DragFloat("Aspect", &aspect, 0.1f);
 		ImGui::DragFloat("Near", &near, 0.1f);
 		ImGui::DragFloat("Far", &far, 0.1f);
 
-		ImGui::ColorEdit3("Background Color", &backgroundColor[0]);
+		ImGui::ColorEdit3("Background Color", glm::value_ptr(backgroundColor));
 		ImGui::Checkbox("Clear Color Buffer", &clearColorBuffer);
 		ImGui::Checkbox("Clear Depth Buffer", &clearDepthBuffer);
 	}

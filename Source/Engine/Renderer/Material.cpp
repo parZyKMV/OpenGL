@@ -40,6 +40,11 @@ namespace neu {
 		SERIAL_READ_NAME(document, "cubeMap", textureName);
 		if (!textureName.empty()) cubeMap = Resources().Get<CubeMap>(textureName);
 
+		// Shadow map
+		textureName = "";
+		SERIAL_READ_NAME(document, "shadowMap", textureName);
+		if (!textureName.empty()) shadowMap = Resources().Get<Texture>(textureName);
+
 		SERIAL_READ(document, baseColor);
 		SERIAL_READ(document, emissiveColor);
 		SERIAL_READ(document, shininess);
@@ -92,6 +97,14 @@ namespace neu {
 			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::CubeMap);
 		}
 
+		// --- Shadow Map ---
+		if (shadowMap) {
+			shadowMap->SetActive(GL_TEXTURE5);
+			shadowMap->Bind();
+			program->SetUniform("u_shadowMap", 5);
+			parameters = (Parameters)((uint32_t)parameters | (uint32_t)Parameters::ShadowMap);
+		}
+
 		// --- Material uniforms ---
 		program->SetUniform("u_material.baseColor", baseColor);
 		program->SetUniform("u_material.emissiveColor", emissiveColor);
@@ -99,25 +112,49 @@ namespace neu {
 		program->SetUniform("u_material.tiling", tiling);
 		program->SetUniform("u_material.offset", offset);
 		program->SetUniform("u_material.parameters", (uint32_t)parameters);
-
 		program->SetUniform("u_ior", ior);
 
 		
 	}
 
 	void Material::UpdateGui() {
-		ImGui::Separator;
-		if (baseMap)
-		{
-			ImGui::Text("Base Map: &s", baseMap->name.c_str());
+		ImGui::Separator();
+		if (baseMap) {
+			ImGui::Text("Base Map: %s", baseMap->name.c_str());
 			Editor::ShowTexture(*baseMap, 32, 32);
-			Editor::GetDialogResource(baseMap, "BaseMapDialog", "Open Texture", "Image files{.png,.jpg,.jpeg,.bmp}");
+			Editor::GetDialogResource<Texture>(baseMap, "BaseMapDialog", "Open texture", "Image (*.png;*.jpg;*.bmp;*.jpeg;*.tga;){.png,.jpg,.bmp,.jpeg,.tga},.*");
 		}
+		ImGui::ColorEdit3("Base Color", glm::value_ptr(baseColor));
+		ImGui::Separator();
+
+		ImGui::Separator();
+		if (specularMap) {
+			ImGui::Text("Specular Map: %s", specularMap->name.c_str());
+			Editor::ShowTexture(*specularMap, 32, 32);
+			Editor::GetDialogResource<Texture>(specularMap, "BaseMapDialog", "Open texture", "Image (*.png;*.jpg;*.bmp;*.jpeg;*.tga;){.png,.jpg,.bmp,.jpeg,.tga},.*");
+		}
+		ImGui::Separator();
+
+		ImGui::Separator();
+		if (emissiveMap) {
+			ImGui::Text("Emmisive Map: %s", emissiveMap->name.c_str());
+			Editor::ShowTexture(*emissiveMap, 32, 32);
+			Editor::GetDialogResource<Texture>(emissiveMap, "BaseMapDialog", "Open texture", "Image (*.png;*.jpg;*.bmp;*.jpeg;*.tga;){.png,.jpg,.bmp,.jpeg,.tga},.*");
+		}
+		ImGui::ColorEdit3("Emmisive Color", glm::value_ptr(emissiveColor));
+		ImGui::Separator();
+
+		ImGui::Separator();
+		if (normalMap) {
+			ImGui::Text("Normal Map: %s", normalMap->name.c_str());
+			Editor::ShowTexture(*normalMap, 32, 32);
+			Editor::GetDialogResource<Texture>(normalMap, "BaseMapDialog", "Open texture", "Image (*.png;*.jpg;*.bmp;*.jpeg;*.tga;){.png,.jpg,.bmp,.jpeg,.tga},.*");
+		}
+		ImGui::Separator();
 
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
 			bool updated = false;
 			updated |= ImGui::ColorEdit3("Base Color", glm::value_ptr(baseColor));
-			updated |= ImGui::ColorEdit3("Specular Color", glm::value_ptr(emissiveColor));
 			updated |= ImGui::DragFloat("Shininess", &shininess, 1.0f);
 			updated |= ImGui::DragFloat2("Tiling", glm::value_ptr(tiling), 0.1f);
 			updated |= ImGui::DragFloat2("Offset", glm::value_ptr(offset), 0.1f);
@@ -125,7 +162,6 @@ namespace neu {
 			if (updated && program) {
 				program->Use();
 				program->SetUniform("u_material.baseColor", baseColor);
-				program->SetUniform("u_material.emissiveColor", emissiveColor);
 				program->SetUniform("u_material.shininess", shininess);
 				program->SetUniform("u_material.tiling", tiling);
 				program->SetUniform("u_material.offset", offset);

@@ -143,5 +143,23 @@
     <None Include="..\..\Build\Assets\materials\postprocess.mat">
       <Filter>Assets\Materials</Filter>
     </None>
+    <None Include="..\..\Build\Assets\scenes\scene03.json">
+      <Filter>Assets\scene</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\materials\rocks.mat">
+      <Filter>Assets\Materials</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\shaders\depth.prog">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\shaders\depth.vert">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\shaders\depth.frag">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\materials\shadow.mat">
+      <Filter>Assets\Materials</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -108,16 +108,35 @@ namespace neu {
         }
         std::vector<Program*> programs(programSet.begin(), programSet.end());
 
+
+
         for (auto& camera : cameras) {
+			PostProcessComponent* postprocessComponent = camera->owner->GetComponent<PostProcessComponent>();
+			bool renderToTexture = camera->outputTexture && (!postprocessComponent || (postprocessComponent && m_postprocess));
+
             if (camera->outputTexture) {
                 camera->outputTexture->BindFramebuffer();
                 glViewport(0, 0, camera->outputTexture->m_size.x, camera->outputTexture->m_size.y);
             }
             camera->Clear();
+
+
+
             DrawPass(renderer, programs, lights, camera);
             if (camera->outputTexture) {
                 camera->outputTexture->UnbindFramebuffer();
                 glViewport(0, 0, renderer.GetWidth(), renderer.GetHeight());
+            }
+
+            if (renderToTexture && postprocessComponent) {
+                camera->Clear(); // <-- add
+
+                auto postProcessProgram = Resources().Get<Program>("shaders/postprocess.prog");
+                postProcessProgram->Use();
+                postprocessComponent->Apply(*postProcessProgram);
+                camera->outputTexture->Bind();
+                auto actor = GetActorByName("postprocess");
+                actor->Draw(renderer);
             }
         }
     }

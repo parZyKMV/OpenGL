@@ -88,7 +88,7 @@ vec3 calculateLight(in Light light, in vec3 position, in vec3 normal, in float s
 
         case DIRECTIONAL:
         {
-            light_dir = normalize(light.direction);
+            light_dir = -normalize(light.direction);
             attenuation = 1.0;
         } break;
 
@@ -98,7 +98,7 @@ vec3 calculateLight(in Light light, in vec3 position, in vec3 normal, in float s
             float dist = length(light.position - position);
             attenuation = calculateAttenuation(dist, light.range);
 
-            float theta = acos(dot(light_dir, light.direction));
+            float theta = acos(dot(light_dir, -light.direction));
             if(theta > light.outerSpotAngle)
             {
                 attenuation = 0.0;
