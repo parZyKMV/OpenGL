@@ -5,10 +5,12 @@ namespace neu {
 	FACTORY_REGISTER(CameraComponent)
 	void CameraComponent::Update(float dt)
 	{
-		view = glm::lookAt(owner->transform.position, owner->transform.position + owner->transform.Forward(), owner->transform.Up());
+		view = (shadowCamera)
+			? glm::lookAt(owner->transform.position, owner->transform.position + owner->transform.Forward(), owner->transform.Up())
+			: glm::lookAt(owner->transform.position, owner->transform.position + owner->transform.Forward(), owner->transform.Up());
 		projection = (projectionType == ProjectionType::Perspective)
-			? glm::perspective(glm::radians(fov),aspect,near, far)
-			: glm::ortho(-size * aspect,size * aspect,-size,size,near,far);
+			? glm::perspective(glm::radians(fov), aspect, near, far)
+			: glm::ortho(-size * aspect, size * aspect, -size, size, near, far);
 	}
 	void CameraComponent::Clear() {
 		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
@@ -26,7 +28,7 @@ namespace neu {
 		this->near = near;
 		this->far = far;
 
-		projection = glm::perspective(glm::radians(fov), aspect, near, far);
+		//projection = glm::perspective(glm::radians(fov), aspect, near, far);
 	}
 
 	void CameraComponent::SetLookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up)

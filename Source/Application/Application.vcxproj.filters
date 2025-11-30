@@ -161,5 +161,14 @@
     <None Include="..\..\Build\Assets\materials\shadow.mat">
       <Filter>Assets\Materials</Filter>
     </None>
+    <None Include="..\..\Build\Assets\shaders\lit_phong_shadow.vert">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\shaders\lit_phong_shadow.frag">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\shaders\lit_phong_shadow.prog">
+      <Filter>Assets\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

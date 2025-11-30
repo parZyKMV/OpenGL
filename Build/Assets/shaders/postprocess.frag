@@ -14,7 +14,7 @@ uniform vec3 u_colorTint = vec3(1,1,1);
 
 uniform float u_time = 0;
 uniform float u_intensity = 1.0;
-uniform vec3 u_tint = vec3(1, 0, 0);
+
 
 uniform sampler2D u_baseMap;
 

@@ -10,9 +10,10 @@ namespace neu {
 
 	void ModelRenderer::Draw(Renderer& renderer)
 	{
-		material->Bind();
-		material->program->SetUniform("u_model", owner->transform.GetMatrix());
-
+		if (material) {
+			material->Bind();
+			material->program->SetUniform("u_model", owner->transform.GetMatrix());
+		}
 		glDepthMask(enableDepth);
 		glCullFace(cullFace);
 
@@ -56,6 +57,7 @@ namespace neu {
 		SERIAL_READ_NAME(value, "cullFace", cullFaceName);
 		if (equalsIgnoreCase(cullFaceName, "front")) cullFace = GL_FRONT;
 	}
+
 	void ModelRenderer::UpdateGui()
 	{
 		std::string text;

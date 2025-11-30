@@ -1,5 +1,5 @@
 {
-	"program": "shaders/lit_phong.prog",
+	"program": "shaders/lit_phong_shadow.prog",
 	"baseMap": "textures/space_crate_base.png",
 	"baseColor": [ 1, 1, 1 ],
 	"specularMap": "textures/space_crate_specular.png",
