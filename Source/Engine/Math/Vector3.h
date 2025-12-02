@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Math.h"
-#include "Core/Assert.h"
 
 #include <iostream>
 
@@ -362,7 +361,7 @@ namespace neu {
         /// - Camera distance calculations for LOD (Level of Detail) systems
         /// </summary>
         /// <returns>The magnitude of the 3D vector as a floating-point value</returns>
-        float Length() const { return neu::math::sqrtf(LengthSqr()); }
+        float Length() const { return math::sqrtf(LengthSqr()); }
     };
 
     /// <summary>

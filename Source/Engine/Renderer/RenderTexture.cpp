@@ -15,7 +15,7 @@ namespace neu {
         m_size = glm::ivec2{ width, height };
 
         // framebuffer
-		glGenFramebuffers(1, &m_fbo);
+        glGenFramebuffers(1, &m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
         // color texture
@@ -29,9 +29,15 @@ namespace neu {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+
         // depth (optional)
         if (depth) {
-            //
+            glGenRenderbuffers(1, &m_depthBuffer);
+            glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
+
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
         }
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -43,8 +49,7 @@ namespace neu {
         return true;
     }
 
-    bool RenderTexture::CreateDepth(int width, int height)
-    {
+    bool RenderTexture::CreateDepth(int width, int height) {
         m_size = glm::ivec2{ width, height };
 
         // framebuffer
@@ -62,13 +67,14 @@ namespace neu {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_texture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_texture, 0);
 
         glDrawBuffer(GL_NONE);
-		glReadBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            LOG_WARNING("Error creating framebuffer");
+            LOG_WARNING("Error creating depth framebuffer");
             return false;
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

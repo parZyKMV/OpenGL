@@ -7,7 +7,10 @@ namespace neu {
 			None		= 0,
 			GrayScale   = (1<<0),
 			ColorTint   = (1<<1),
-			ScaleLine   = (2<<1)
+			Scanline   = (2<<1),
+			Grain		= (1<<3),
+			Invert		= (1<<4),
+			Vignette	= (1<<5)
 
 		};
 
@@ -23,5 +26,9 @@ namespace neu {
 	public:
 		Parameters parameters = Parameters::None;
 		glm::vec3 colorTint{ 1,1,1 };
+		float blend{ 1.0f };
+
+		float vignetteRadius{ 1.0f };
+		float vignetteSoftness{ 0.45f };
 	};
 }
